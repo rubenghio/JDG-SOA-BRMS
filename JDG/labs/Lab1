@@ -1,0 +1,31 @@
+Lab 1 - Detailed (or at least more detailed) Steps
+Open up JBDS, create new workspace
+File -> Import maven project, search to Labs folder
+JBDS is now ready
+
+To configure new cache
+open up JDG_Server/standalone/configuration/standalone.xml
+Add the following:
+	<local-cache name="RESTcache" start="EAGER"/>
+Start the JDG server
+In server log (JDG_Server/standalone/log/server.log) you should see the name of your cache as being enabled
+
+Back in JBDS, you will fill in the following methods
+	addFivePiecesOfDataWithPut
+		be sure to set the TTL.  If you need help on the header name, hit http://localhost:8080 to see the REST quick reference
+		Offset each insert TTL  (30, 60, etc)
+	addOnePieceOfDataWithPost
+	removeCache
+Run code on server
+In System out you should see
+	5 posts executed along with 200 status for each
+	How long the 5 inserts took
+	
+	The next post tries to post to an existing key.  You should see a 409 conflict error
+	
+	Then 5 GETS to show the values of the data in the cache.  This repeats with delays (based on the TTL time). This should show the values of the cache timing out and leaving
+	You should start seeing exceptions as queries for timed out caches hit
+	
+	Finally you will see the call to delete the cache and a return code of 200
+	
+	As the cache is dropped at the end, if you run this multiple times without restarting JDG, you should be fine.

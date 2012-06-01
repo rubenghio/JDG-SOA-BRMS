@@ -1,0 +1,28 @@
+Lab 2
+Open up JBDS (or have open)
+Using same labs project
+JBDS is ready
+
+To configure new cache
+open up JDG_Server/standalone/configuration/standalone.xml
+Add the following:
+	<local-cache name="HotRodcache" start="EAGER"/>
+Start the JDG server
+In server log (JDG_Server/standalone/log/server.log) you should see the name of your cache as being enabled
+
+Back in JBDS, you will fill in the following methods
+	addFivePiecesOfNewData
+		remoteCache.put....
+	tryToModifyExisting
+		remoteCache.put ...
+		remoteCache.putIfAbsent
+		remoteCache.replace
+	addFivePiecesOfNewDataAsynch
+		Future set
+		remoteCache.putAsynch
+	removeCache
+		remoteCache.clear
+		
+To run with asserts - all should pass - pass the -ea arg to the VM.  Modify 'Run Configurations' in JBDS for that class.
+Note timings
+If all runs as expected, all that shows in console out is the timings

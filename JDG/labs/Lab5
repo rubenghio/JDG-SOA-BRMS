@@ -1,0 +1,25 @@
+Lab 5
+	Install TP plugin to JON_HOME/plugins
+	Intall JDG agent to JON_HOME/plugins
+		cp JDG/client/rhq-agent/* JON_HOME/plugins
+	Start JON database
+		sudo service postgresql start
+	Start JON
+		bin/rhq-server.sh start
+	Wait 30 seconds or so for it to start up
+	Hit JON in browser - http://localhost:7080
+	Start agent
+		bin/rhq-agent.sh start
+	Agent should connect and start downloading / updating. If not, run plugins --update
+	In JDG/bin, run add-user.sh
+		Add a new user to the management realm
+		set the user  / pass to whatever you want, just remember it
+	Start up JDG
+	Run agent discovery
+		discovery --full
+	Verify JDG shows in discovery.  Start monitoring it
+	Go to the JDG server, then Inventory -> Connection Settings
+		Setup user / pass to the user you just created
+	Now JDG should show up as available
+	Open JBDS, run JON_Lab class. This will load HotRodCache created in Lab2.  It will run over a 5 minute period so continue watching JON
+	Watch statistics in JON

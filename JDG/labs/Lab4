@@ -1,0 +1,18 @@
+Lab 4
+Open up benchmark.xml located at Radargun/conf
+Modify benchmark.xml accordingly (just use infinspan xml files)
+Run bin/master.sh (note that you must run from Radargun root, otherwise you will get an exception)
+Run bin/master.sh -status to make sure master is running
+Start the slaves (number defined in standalone.xml)
+	bin/slave.sh -p 0
+	bin/slave.sh -p 1
+	bin/slave.sh -p 2
+	bin/slave.sh -p 3
+	NOTE -p flag makes it so each slave will have its own log
+And the test is running.  tail radargun.log
+Test may take a few minutes to run (15 minutes on my laptop with 4 slaves and 5000 requests per slave. Watch logs for completion - 
+	You will see a 'master process shutting down message'
+NOTE - this test is intense - don't plan on doing anything while it runs
+Reports are generated in reports folder.  They are .png files
+
+	If you want to build - clone repo and run mvn install from root

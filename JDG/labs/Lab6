@@ -1,0 +1,83 @@
+Lab 6
+
+Create new cache - modify standalone.xml
+Add:
+
+<local-cache name="storeCache" start="EAGER">
+	<eviction strategy="NONE" max-entries="5000"/>
+	<file-store path="/home/jtosi/JDG_Server/store" passivation="false" preload="true" fetch-state="true" purge="false"/>
+</local-cache>
+
+Startup JDG
+Import project if not done already, run StoreLoadExample from JBDS
+Should see in console cache was originally empty, then timing to insert 5000 items
+Go to directory in file-store path and verify items created
+Shutdown JDG
+Start JDG back up, run example
+In console, you should see that cache was not empty and an initial size of cache
+
+Shutdown JDG, modify cacheConfig, set passivation to true
+Wipe your store directory (rm -rf)
+Startup JDG
+Import project if not done already, run StoreLoadExample from JBDS
+Should see in console cache was originally empty, then timing to insert 5000 items
+Go to directory in file-store path and verify items created, how many?
+Should be less than before
+
+Shutdown JDG, change file-store to jdbc store.  To do this, you will have to add data source, including subsytem
+PART OF INIT IS BASED ON CACHE CONFIGURATION:
+<subsystem xmlns="urn:jboss:domain:datasources:1.0">
+        <datasources>
+            <datasource jndi-name="java:jboss/datasources/ExampleDS" pool-name="ExampleDS" enabled="true" use-java-context="true">
+                <connection-url>jdbc:h2:mem:test;INIT=CREATE TABLE JDG_NC_BK_L1EXAMPLECACHE (ID IDENTITY PRIMARY KEY, DATUM BINARY, VERSION BIGINT)DB_CLOSE_DELAY=-1</connection-url>
+                <driver>h2</driver>
+                <security>
+                    <user-name>sa</user-name>
+                    <password>sa</password>
+                </security>
+            </datasource>
+            <drivers>
+                <driver name="h2" module="com.h2database.h2">
+                    <xa-datasource-class>org.h2.jdbcx.JdbcDataSource</xa-datasource-class>
+                </driver>
+            </drivers>
+        </datasources>
+    </subsystem>
+    
+You may have to include h2 jar file too
+
+<locking
+            		isolation="REPEATABLE_READ"
+            		acquire-timeout="20000"
+            		concurrency-level="500"
+            		striping="false" />
+        			<transaction mode="NONE" />
+
+        			<string-keyed-jdbc-store datasource="java:jboss/datasources/ExampleDS" passivation="false" preload="false" purge="false">
+            		<property name="databaseType">H2</property>
+            		<string-keyed-table prefix="JDG">
+	                 	<id-column name="id" type="VARCHAR"/>
+   	              	<data-column name="datum" type="BINARY"/>
+      	           	<timestamp-column name="version" type="BIGINT"/>
+            		</string-keyed-table>
+        			</string-keyed-jdbc-store>
+        			
+
+Copy JDG to a new instance
+cp -r JDG_ORIG JDG_NEW
+
+Modify standalone-ha.xml ports on second instance, increment by 100
+Create distributed cache in both
+
+<distributed-cache name="Nol1exampleCache" mode="SYNC" virtual-nodes="1" owners="2" remote-timeout="30000" start="EAGER" l1-lifespan="0">
+               <locking isolation="READ_COMMITTED" acquire-timeout="30000" concurrency-level="1000" striping="false" />
+               <transaction mode="NONE" />
+            </distributed-cache>
+            
+Modify logging
+<logger category="org.infinispan">
+            <level name="TRACE" />
+         </logger>
+
+./standalone.sh --server-config=standalone-ha.xml
+
